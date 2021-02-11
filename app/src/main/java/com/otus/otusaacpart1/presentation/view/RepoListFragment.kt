@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 
@@ -18,9 +19,18 @@ import com.otus.otusaacpart1.presentation.viewmodel.RepoListViewModel
 import java.util.ArrayList
 
 class RepoListFragment : Fragment() {
-    private var viewModel: RepoListViewModel? = null
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity()).get(RepoListViewModel::class.java)
+    }
+
     private var recyclerView: RecyclerView? = null
-    private var adapter: ReposAdapter? = null
+    private val adapter by lazy {
+        ReposAdapter(LayoutInflater.from(context), object : ReposAdapter.OnRepoSelectedListener {
+            override fun onRepoSelect(url: String) {
+                viewModel.onRepoSelect(url)
+            }
+        })
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_repo_list, container, false)
@@ -29,20 +39,16 @@ class RepoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initRecycler()
 
-        viewModel = ViewModelProviders.of(activity!!).get(RepoListViewModel::class.java!!)
-        viewModel!!.repos.observe(this.viewLifecycleOwner, Observer<List<Repo>> { repos -> adapter!!.setItems(repos)})
-        viewModel!!.error.observe(this.viewLifecycleOwner, Observer<String> { error -> Toast.makeText(context, error, Toast.LENGTH_SHORT).show() })
+        viewModel.repos.observe(viewLifecycleOwner, Observer<List<Repo>> { repos -> adapter.setItems(repos)})
+        viewModel.error.observe(viewLifecycleOwner, Observer<String> { error ->
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+        })
 
-        view.findViewById<View>(R.id.getDataBtn).setOnClickListener { v -> viewModel!!.onGetDataClick() }
+        view.findViewById<View>(R.id.getDataBtn).setOnClickListener { viewModel.onGetDataClick() }
 
     }
 
     private fun initRecycler() {
-        adapter = ReposAdapter(LayoutInflater.from(context), object : ReposAdapter.OnRepoSelectedListener {
-            override fun onRepoSelect(url: String) {
-                viewModel!!.onRepoSelect(url)
-            }
-        })
         recyclerView = view!!.findViewById(R.id.recyclerView)
         recyclerView!!.adapter = adapter
     }

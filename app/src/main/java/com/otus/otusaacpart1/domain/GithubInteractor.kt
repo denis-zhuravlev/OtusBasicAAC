@@ -10,8 +10,8 @@ import retrofit2.Response
 
 
 class GithubInteractor(private val githubService: GithubService, private val reposRepository: ReposRepository) {
-
     fun getRepos(username: String, callback: GetRepoCallback) {
+
         githubService.getUserRepos(username).enqueue(object : Callback<List<Repo>> {
             override fun onResponse(call: Call<List<Repo>>, response: Response<List<Repo>>) {
                 if (response.isSuccessful) {

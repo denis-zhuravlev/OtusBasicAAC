@@ -1,5 +1,6 @@
 package com.otus.otusaacpart1.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,9 +10,14 @@ import com.otus.otusaacpart1.data.entity.Repo
 import com.otus.otusaacpart1.domain.GithubInteractor
 
 class RepoListViewModel : ViewModel() {
+    init {
+        Log.d("viewModel", this.toString())
+    }
     private val reposLiveData = MutableLiveData<List<Repo>>()
     private val errorLiveData = MutableLiveData<String>()
     private val selectedRepoUrlLiveData = MutableLiveData<String>()
+
+    // LiveData -> BehaviourSubject
 
     private val githubInteractor = App.instance!!.githubInteractor
 

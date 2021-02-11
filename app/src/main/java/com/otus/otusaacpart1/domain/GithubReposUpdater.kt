@@ -14,16 +14,33 @@ import com.otus.otusaacpart1.data.entity.Repo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-/*
 
 class GithubReposUpdater(private val service: GithubService) : LifecycleObserver {
     private val handler = Handler()
 
-    private val taskRunnable = object: Runnable {
+    fun setLifecycle(lifecycle: Lifecycle) {
+        //if (lifecycle.currentState.isAtLeast())
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun onLifecycleResume() {
+        Log.d(TAG, "onResume")
+
+        handler.postDelayed(GetReposRunnable(), DELAY.toLong())
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onLifecyclePaused() {
+        Log.d(TAG, "onPause")
+
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    inner class GetReposRunnable : Runnable {
         override fun run() {
             service.getUserRepos("octocat").enqueue(object : Callback<List<Repo>> {
                 override fun onResponse(call: Call<List<Repo>>, response: Response<List<Repo>>) {
-                    handler.postDelayed(this@GithubReposUpdater.taskRunnable, DELAY.toLong())
+                    handler.postDelayed(GetReposRunnable(), DELAY.toLong())
                 }
 
                 override fun onFailure(call: Call<List<Repo>>, t: Throwable) {
@@ -33,23 +50,8 @@ class GithubReposUpdater(private val service: GithubService) : LifecycleObserver
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onLifecycleResume() {
-        Log.d(TAG, "onResume")
-
-        handler.postDelayed(taskRunnable, DELAY.toLong())
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onLifecyclePaused() {
-        Log.d(TAG, "onPause")
-
-
-        handler.removeCallbacksAndMessages(null)
-    }
-
     companion object {
         private val TAG = "GithubReposUpdater"
         private val DELAY = 5000
     }
-}*/
+}

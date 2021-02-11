@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.otus.otusaacpart1.data.GithubService
 import com.otus.otusaacpart1.data.ReposRepository
 import com.otus.otusaacpart1.domain.GithubInteractor
+import com.otus.otusaacpart1.domain.GithubReposUpdater
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class App : Application() {
 
     lateinit var githubService: GithubService
-    //lateinit var githubReposUpdater: GithubReposUpdater
+    lateinit var githubReposUpdater: GithubReposUpdater
     lateinit var githubInteractor: GithubInteractor
     var reposRepository = ReposRepository()
 
@@ -47,7 +48,7 @@ class App : Application() {
                 .build()
                 .create(GithubService::class.java!!)
 
-        ///githubReposUpdater = GithubReposUpdater(githubService)
+        githubReposUpdater = GithubReposUpdater(githubService)
     }
 
     companion object {
